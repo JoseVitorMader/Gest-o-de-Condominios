@@ -1,0 +1,19 @@
+{
+  "name": "gestaocondominio",
+  "version": "1.0.0",
+  "description": "Avaliação integrada - Desenvolvimento Web I, Modelagem UML e Linguagem SQL",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoseVitorMader/Gest-o-de-Condominios.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JoseVitorMader/Gest-o-de-Condominios/issues"
+  },
+  "homepage": "https://github.com/JoseVitorMader/Gest-o-de-Condominios#readme"
+}
