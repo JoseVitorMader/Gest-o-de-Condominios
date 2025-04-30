@@ -1014,6 +1014,506 @@ app.post('/apartment/update/:id', function(req, res){
     });
 });
 
+app.get("/resident/read", function(req, res) {
+    let searchTerm = req.query.search || "";
+    
+    let query = `SELECT m.*, 
+                a.numero as apartamento_numero,
+                b.descricao as bloco_descricao
+                FROM moradores m
+                JOIN apartamentos a ON m.apartamento_id = a.id
+                JOIN blocos b ON a.bloco_id = b.id
+                WHERE 1=1`;
+    
+    let params = [];
+    
+    if (searchTerm) {
+        query += ` AND (m.nome LIKE ? OR m.cpf LIKE ? OR a.numero LIKE ? OR b.descricao LIKE ?)`;
+        params.push(`%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`);
+    }
+    
+    query += ` ORDER BY b.descricao, a.numero, m.nome`;
+    
+    db.query(query, params, function(err, rows) {
+        if (!err) {
+            console.log("Consulta de moradores realizada com sucesso!");
+
+            res.send(`
+                <!DOCTYPE html>
+                <html lang="pt-BR">
+                <head> 
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>SysCondomínio - Moradores</title>
+                    <link rel="stylesheet" href="/style.css">
+                    <link rel="stylesheet" href="/styleBlockCreate.css">
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                </head>
+                <body>
+                    <div class="app-container">
+                        <header class="app-header">
+                            <div class="logo">
+                                <i class="fas fa-building"></i>
+                                <h1>SysCondomínio</h1>
+                            </div>
+                            <div class="user-area">
+                                <span>Síndico</span>
+                                <img src="/Public/images/user-avatar.jpg" alt="Usuário">
+                            </div>
+                        </header>
+
+                        <nav class="sidebar">
+                            <ul class="menu">
+                                <li><a href="/block/read"><i class="fas fa-cube"></i> Blocos</a></li>
+                                <li><a href="/apartment/read"><i class="fas fa-door-open"></i> Apartamentos</a></li>
+                                <li><a href="/resident/read" class="active"><i class="fas fa-users"></i> Moradores</a></li>
+                            </ul>
+                        </nav>
+
+                        <main class="main-content">
+                            <div class="page-header">
+                                <h2><i class="fas fa-users"></i> Moradores Cadastrados</h2>
+                                <div class="actions">
+                                    <a href="/resident/create" class="btn-primary">
+                                        <i class="fas fa-plus"></i> Novo Morador
+                                    </a>
+                                    <a href="/" class="btn-primary">
+                                        <i class="fas fa-backward"></i> Voltar
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="search-container">
+                                <div class="search-bar">
+                                    <form method="GET" action="/resident/read">
+                                        <input type="text" name="search" id="searchInput" placeholder="Pesquisar por nome, CPF, apartamento ou bloco..." value="${searchTerm}">
+                                        <button type="submit" id="searchBtn" class="btn-icon">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                        ${searchTerm ? `
+                                            <a href="/resident/read" class="btn-icon danger">
+                                                <i class="fas fa-times"></i> Limpar
+                                            </a>
+                                        ` : ''}
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div class="table-container">
+                                ${rows.length > 0 ? `
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>CPF</th>
+                                                <th>Nome</th>
+                                                <th>Apartamento</th>
+                                                <th>Bloco</th>
+                                                <th>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${rows.map(row => `
+                                                <tr>
+                                                    <td>${row.cpf}</td>
+                                                    <td>${row.nome}</td>
+                                                    <td>${row.apartamento_numero}</td>
+                                                    <td>${row.bloco_descricao}</td>
+                                                    <td class="actions-cell">
+                                                        <a href="/resident/update/${row.id}" class="btn-icon" title="Alterar">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        <a href="/resident/delete/${row.id}" class="btn-icon danger" onclick="return confirm('Tem certeza que deseja excluir este morador?')">
+                                                            <i class="fas fa-trash"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                ` : `
+                                    <div class="no-results">
+                                        <i class="fas fa-user-slash"></i>
+                                        <p>Nenhum morador encontrado</p>
+                                        ${searchTerm ? `
+                                            <a href="/resident/read" class="btn-primary">
+                                                <i class="fas fa-list"></i> Ver todos
+                                            </a>
+                                        ` : ''}
+                                    </div>
+                                `}
+                            </div>
+                        </main>
+                    </div>
+                </body>
+                </html>
+            `);
+        } else {
+            console.log("Erro ao consultar moradores:", err);
+            res.send(`
+                <html>
+                    <head>
+                        <title>Erro</title>
+                        <link rel="stylesheet" href="/style.css">
+                    </head>
+                    <body class="error-page">
+                        <div class="error-container">
+                            <h1><i class="fas fa-exclamation-triangle"></i> Erro ao carregar moradores</h1>
+                            <p>${err.message}</p>
+                            <a href="/" class="btn-primary">
+                                <i class="fas fa-home"></i> Voltar ao início
+                            </a>
+                        </div>
+                    </body>
+                </html>
+            `);
+        }
+    });
+});
+
+app.get('/resident/create', function(req, res) {
+    const queryApartamentos = `
+        SELECT a.id, a.numero, b.descricao as bloco_descricao 
+        FROM apartamentos a
+        JOIN blocos b ON a.bloco_id = b.id
+        ORDER BY b.descricao, a.numero
+    `;
+    
+    db.query(queryApartamentos, function(err, apartamentos) {
+        if (err) {
+            console.log("Erro ao buscar apartamentos:", err);
+            return res.status(500).send("Erro ao carregar formulário");
+        }
+
+        res.send(`
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head> 
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>SysCondomínio - Cadastrar Morador</title>
+                <link rel="stylesheet" href="/style.css">
+                <link rel="stylesheet" href="/styleResidentCreate.css">
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                <script>
+                    function toggleVehicleFields() {
+                        const hasVehicle = document.getElementById('possui_veiculo').checked;
+                        const vehicleFields = document.getElementById('vehicle-fields');
+                        const garageFields = document.getElementById('garage-fields');
+                        
+                        vehicleFields.style.display = hasVehicle ? 'block' : 'none';
+                        garageFields.style.display = hasVehicle ? 'block' : 'none';
+                    }
+                </script>
+            </head>
+            <body>
+                <div class="app-container">
+                    <header class="app-header">
+                        <div class="logo">
+                            <i class="fas fa-building"></i>
+                            <h1>SysCondomínio</h1>
+                        </div>
+                        <div class="user-area">
+                            <span>Síndico</span>
+                            <img src="/Public/images/user-avatar.jpg" alt="Usuário">
+                        </div>
+                    </header>
+
+                    <nav class="sidebar">
+                        <ul class="menu">
+                            <li><a href="/block/read"><i class="fas fa-cube"></i> Blocos</a></li>
+                            <li><a href="/apartment/read"><i class="fas fa-door-open"></i> Apartamentos</a></li>
+                            <li><a href="/resident/read" class="active"><i class="fas fa-users"></i> Moradores</a></li>
+                        </ul>
+                    </nav>
+
+                    <main class="main-content">
+                        <div class="page-header">
+                            <h2><i class="fas fa-user-plus"></i> Cadastrar Morador</h2>
+                            <div class="actions">
+                                <a href="/resident/read" class="btn-primary">
+                                    <i class="fas fa-list"></i> Lista de Moradores
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="form-container">
+                            <form method="POST" action="/resident/create/resident">
+                                <div class="form-group">
+                                    <label for="cpf">CPF:</label>
+                                    <input type="text" id="cpf" name="cpf" required placeholder="000.000.000-00">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="nome">Nome:</label>
+                                    <input type="text" id="nome" name="nome" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="telefone">Telefone:</label>
+                                    <input type="text" id="telefone" name="telefone" placeholder="(00) 00000-0000">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="apartamento_id">Apartamento:</label>
+                                    <select id="apartamento_id" name="apartamento_id" required>
+                                        <option value="">Selecione um apartamento</option>
+                                        ${apartamentos.map(apto => `
+                                            <option value="${apto.id}">Bloco ${apto.bloco_descricao} - Apt ${apto.numero}</option>
+                                        `).join('')}
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Responsável pelo apartamento?</label>
+                                    <div class="radio-group">
+                                        <label>
+                                            <input type="radio" name="responsavel" value="on"> Sim
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="responsavel" value="off" checked> Não
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Proprietário do apartamento?</label>
+                                    <div class="radio-group">
+                                        <label>
+                                            <input type="radio" name="proprietario" value="on"> Sim
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="proprietario" value="off" checked> Não
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="possui_veiculo">Possui veículo?</label>
+                                    <input type="checkbox" id="possui_veiculo" name="possui_veiculo" onchange="toggleVehicleFields()">
+                                </div>
+                                
+                                <div id="garage-fields" style="display: none;">
+                                    <div class="form-group">
+                                        <label for="vagas_garagem">Quantidade de vagas de garagem:</label>
+                                        <input type="number" id="vagas_garagem" name="vagas_garagem" min="0" value="0">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="numero_vaga">Número da vaga:</label>
+                                        <input type="text" id="numero_vaga" name="numero_vaga">
+                                    </div>
+                                </div>
+                                
+                                <div id="vehicle-fields" style="display: none;">
+                                    <h3><i class="fas fa-car"></i> Cadastrar Veículo</h3>
+                                    
+                                    <div class="form-group">
+                                        <label for="placa">Placa:</label>
+                                        <input type="text" id="placa" name="placa" placeholder="AAA-0000">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="marca">Marca:</label>
+                                        <input type="text" id="marca" name="marca">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="modelo">Modelo:</label>
+                                        <input type="text" id="modelo" name="modelo">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="submit" class="btn-primary">
+                                        <i class="fas fa-save"></i> Cadastrar
+                                    </button>
+                                    <a href="/resident/read" class="btn-secondary">
+                                        <i class="fas fa-times"></i> Cancelar
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </main>
+                </div>
+            </body>
+            </html>
+        `);
+    });
+});
+
+app.post('/resident/create/resident', function(req, res) {
+    const { 
+        cpf, 
+        nome, 
+        telefone, 
+        apartamento_id, 
+        responsavel, 
+        proprietario,
+        possui_veiculo,
+        vagas_garagem,
+        numero_vaga,
+        placa,
+        marca,
+        modelo
+    } = req.body;
+
+    if (!cpf || !nome || !apartamento_id) {
+        return res.status(400).send("CPF, Nome e Apartamento são campos obrigatórios");
+    }
+
+    const isResponsavel = responsavel === 'on';
+    const isProprietario = proprietario === 'on';
+    const hasVehicle = possui_veiculo === 'on';
+
+    db.beginTransaction(function(err) {
+        if (err) {
+            console.log("Erro ao iniciar transação:", err);
+            return res.status(500).send("Erro no servidor");
+        }
+
+
+        const insertMorador = `
+            INSERT INTO moradores 
+            (cpf, nome, telefone, apartamento_id, responsavel, proprietario, vagas_garagem) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `;
+        
+        const moradorValues = [
+            cpf, 
+            nome, 
+            telefone, 
+            apartamento_id, 
+            isResponsavel, 
+            isProprietario,
+            vagas_garagem || 0
+        ];
+
+        db.query(insertMorador, moradorValues, function(err, result) {
+            if (err) {
+                return db.rollback(function() {
+                    console.log("Erro ao cadastrar morador:", err);
+                    
+                    if (err.code === 'ER_DUP_ENTRY') {
+                        res.status(400).send(`
+                            <div class="error-message">
+                                <i class="fas fa-exclamation-circle"></i>
+                                Já existe um morador cadastrado com este CPF.
+                                <a href="/resident/create" class="btn-primary">Tentar novamente</a>
+                            </div>
+                        `);
+                    } else {
+                        res.status(500).send(`
+                            <div class="error-message">
+                                <i class="fas fa-exclamation-circle"></i>
+                                Erro ao cadastrar morador. Por favor, tente novamente.
+                                <a href="/resident/create" class="btn-primary">Voltar</a>
+                            </div>
+                        `);
+                    }
+                });
+            }
+
+            if (hasVehicle && placa) {
+                const insertVeiculo = `
+                    INSERT INTO veiculos 
+                    (morador_id, placa, marca, modelo, vaga) 
+                    VALUES (?, ?, ?, ?, ?)
+                `;
+                
+                const veiculoValues = [
+                    result.insertId, 
+                    placa,
+                    marca,
+                    modelo,
+                    numero_vaga
+                ];
+
+                db.query(insertVeiculo, veiculoValues, function(err) {
+                    if (err) {
+                        return db.rollback(function() {
+                            console.log("Erro ao cadastrar veículo:", err);
+                            
+                            if (err.code === 'ER_DUP_ENTRY') {
+                                res.status(400).send(`
+                                    <div class="error-message">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        Já existe um veículo cadastrado com esta placa.
+                                        <a href="/resident/create" class="btn-primary">Tentar novamente</a>
+                                    </div>
+                                `);
+                            } else {
+                                res.status(500).send(`
+                                    <div class="error-message">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        Morador cadastrado, mas erro ao cadastrar veículo. Por favor, edite o morador para adicionar o veículo.
+                                        <a href="/resident/read" class="btn-primary">Lista de Moradores</a>
+                                    </div>
+                                `);
+                            }
+                        });
+                    }
+                    db.commit(function(err) {
+                        if (err) {
+                            return db.rollback(function() {
+                                console.log("Erro ao fazer commit:", err);
+                                res.status(500).send(`
+                                    <div class="error-message">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        Erro ao finalizar cadastro. Por favor, verifique os dados.
+                                        <a href="/resident/read" class="btn-primary">Lista de Moradores</a>
+                                    </div>
+                                `);
+                            });
+                        }
+
+                        console.log("Morador e veículo cadastrados com sucesso!");
+                        res.redirect("/resident/read");
+                    });
+                });
+            } else {
+                db.commit(function(err) {
+                    if (err) {
+                        return db.rollback(function() {
+                            console.log("Erro ao fazer commit:", err);
+                            res.status(500).send(`
+                                <div class="error-message">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    Erro ao finalizar cadastro.
+                                    <a href="/resident/read" class="btn-primary">Lista de Moradores</a>
+                                </div>
+                            `);
+                        });
+                    }
+
+                    console.log("Morador cadastrado com sucesso!");
+                    res.redirect("/resident/read");
+                });
+            }
+        });
+    });
+});
+
+app.get('/resident/delete/:id', function(req, res){
+    const id = req.params.id;
+
+    db.query('DELETE FROM veiculos WHERE morador_id = ?', [id], function(err, result){
+        if (err) {
+            console.log('Erro ao excluir o produto', err);
+            res.status(500).send('Erro ao excluir o produto');
+            return;
+        }
+    })
+
+    db.query('DELETE FROM moradores WHERE id = ?', [id], function(err, result){
+        if (err) {
+            console.log('Erro ao excluir o produto', err);
+            res.status(500).send('Erro ao excluir o produto');
+            return;
+        }
+    })
+    console.log('Produto excluído com sucesso!');
+    res.redirect('/resident/read');
+});
 
 
 app.listen(3000, () => {
