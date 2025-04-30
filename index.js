@@ -686,8 +686,6 @@ app.get('/apartment/delete/:id', function(req, res){
 
 app.get('/apartment/update/:id', function(req, res){
     const id = req.params.id;
-
-    // Query que busca o apartamento e o nome do bloco relacionado
     const query = `
         SELECT a.*, b.descricao as bloco_descricao 
         FROM apartamentos a
