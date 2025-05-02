@@ -2,6 +2,10 @@ const express = require('express');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
+
+
 
 
 const app = express();
@@ -31,9 +35,42 @@ db.connect((err) => {
     }
 });
 
-app.get("/", function(req, res){
-    res.sendFile(__dirname + "/index.html");
-}); 
+app.get("/", (req, res) => {
+    const queries = {
+        residents: "SELECT COUNT(*) as total FROM moradores",
+        collected: "SELECT SUM(valor_pago) as total FROM pagamentos WHERE status = 'pago'",
+        requests: "SELECT COUNT(*) as total FROM manutencoes"
+    };
+
+    db.query(queries.residents, (err, resResidents) => {
+        if (err) return res.status(500).send("Failed to fetch residents");
+
+        db.query(queries.collected, (err, resCollected) => {
+            if (err) return res.status(500).send("Failed to fetch collected");
+
+            db.query(queries.requests, (err, resRequests) => {
+                if (err) return res.status(500).send("Failed to fetch requests");
+
+                const totalResidents = resResidents[0].total;
+                const totalCollected = parseFloat(resCollected[0].total) || 0;
+                const totalRequests = resRequests[0].total;
+
+                fs.readFile(path.join(__dirname, '/index.html'), 'utf8', (err, html) => {
+                    if (err) return res.status(500).send("Failed to load page");
+
+                    const finalHtml = html
+                        .replace('{{totalResidents}}', totalResidents)
+                        .replace('{{totalCollected}}', `R$ ${totalCollected.toFixed(2).replace('.', ',')}`)
+                        .replace('{{totalRequests}}', totalRequests);
+
+                    res.send(finalHtml);
+                });
+            });
+        });
+    });
+});
+
+
 
 app.get("/block/create", function(req, res){
     res.sendFile(__dirname + "/Pages/Block/Create/index.html");
@@ -69,7 +106,7 @@ app.get("/block/read", function(req, res) {
                             </div>
                             <div class="user-area">
                                 <span>Síndico</span>
-                                <img src="/Public/images/user-avatar.jpg" alt="Usuário">
+                                <img src="/images/user-avatar.jpg" alt="Usuário">
                             </div>
                         </header>
 
@@ -464,7 +501,7 @@ app.get("/apartment/create", function(req, res) {
                         </div>
                         <div class="user-area">
                             <span>Síndico</span>
-                            <img src="/Public/images/user-avatar.jpg" alt="Usuário">
+                            <img src="/images/user-avatar.jpg" alt="Usuário">
                         </div>
                     </header>
 
@@ -564,7 +601,7 @@ app.get("/apartment/read", function(req, res) {
                             </div>
                             <div class="user-area">
                                 <span>Síndico</span>
-                                <img src="/Public/images/user-avatar.jpg" alt="Usuário">
+                                <img src="/images/user-avatar.jpg" alt="Usuário">
                             </div>
                         </header>
 
@@ -1105,7 +1142,7 @@ app.get("/resident/read", function(req, res) {
                             </div>
                             <div class="user-area">
                                 <span>Síndico</span>
-                                <img src="/Public/images/user-avatar.jpg" alt="Usuário">
+                                <img src="/images/user-avatar.jpg" alt="Usuário">
                             </div>
                         </header>
 
@@ -1264,7 +1301,7 @@ app.get('/resident/create', function(req, res) {
                         </div>
                         <div class="user-area">
                             <span>Síndico</span>
-                            <img src="/Public/images/user-avatar.jpg" alt="Usuário">
+                            <img src="/images/user-avatar.jpg" alt="Usuário">
                         </div>
                     </header>
 
@@ -2513,7 +2550,7 @@ app.get('/payment/create', function(req, res) {
                         </div>
                         <div class="user-area">
                             <span>Síndico</span>
-                            <img src="/Public/images/user-avatar.jpg" alt="Usuário">
+                            <img src="/images/user-avatar.jpg" alt="Usuário">
                         </div>
                         
                     </header>
@@ -2768,7 +2805,7 @@ app.get("/maintenance/register", function(req, res) {
                     </div>
                     <div class="user-area">
                         <span>Síndico</span>
-                        <img src="https://via.placeholder.com/40" alt="Usuário">
+                        <img src="/images/user-avatar.jpg" alt="Usuário">
                     </div>
                 </header>
                 
