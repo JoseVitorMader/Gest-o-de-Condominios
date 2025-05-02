@@ -6,7 +6,7 @@ const cors = require('cors');
 
 const app = express();
 
-app.use(express.static('public'));
+app.use(express.static('Public'));
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -75,9 +75,12 @@ app.get("/block/read", function(req, res) {
 
                         <nav class="sidebar">
                             <ul class="menu">
-                                <li><a href="/block/read" class="active"><i class="fas fa-cube"></i> Blocos</a></li>
-                                <li><a href="/apartment/read"><i class="fas fa-door-open"></i> Apartamentos</a></li>
-                                <li><a href="/resident/read"><i class="fas fa-users"></i> Moradores</a></li>
+                                <li><a href="/block/read"><i class="fas fa-search"></i> Pesquisa de Blocos</a></li>
+                                <li><a href="/apartment/read"><i class="fas fa-search"></i> Pesquisa de Apartamentos</a></li>
+                                <li><a href="/resident/read"><i class="fas fa-user-friends"></i> Pesquisa de Moradores</a></li>
+                                <li><a href="/payment/create"><i class="fas fa-hand-holding-usd"></i> Registro de Pagamento</a></li>
+                                <li><a href="/maintenance/create"><i class="fas fa-clipboard-list"></i> Registro de tipos de Manutenção</a></li>
+                                <li><a href="/maintenance/register"><i class="fas fa-hammer"></i> Registrar Manutenção</a></li>
                             </ul>
                         </nav>
 
@@ -567,9 +570,12 @@ app.get("/apartment/read", function(req, res) {
 
                         <nav class="sidebar">
                             <ul class="menu">
-                                <li><a href="/block/read"><i class="fas fa-cube"></i> Blocos</a></li>
-                                <li><a href="/apartment/read" class="active"><i class="fas fa-door-open"></i> Apartamentos</a></li>
-                                <li><a href="/resident/read"><i class="fas fa-users"></i> Moradores</a></li>
+                                <li><a href="/block/read"><i class="fas fa-search"></i> Pesquisa de Blocos</a></li>
+                                <li><a href="/apartment/read"><i class="fas fa-search"></i> Pesquisa de Apartamentos</a></li>
+                                <li><a href="/resident/read"><i class="fas fa-user-friends"></i> Pesquisa de Moradores</a></li>
+                                <li><a href="/payment/create"><i class="fas fa-hand-holding-usd"></i> Registro de Pagamento</a></li>
+                                <li><a href="/maintenance/create"><i class="fas fa-clipboard-list"></i> Registro de tipos de Manutenção</a></li>
+                                <li><a href="/maintenance/register"><i class="fas fa-hammer"></i> Registrar Manutenção</a></li>
                             </ul>
                         </nav>
 
@@ -1105,9 +1111,12 @@ app.get("/resident/read", function(req, res) {
 
                         <nav class="sidebar">
                             <ul class="menu">
-                                <li><a href="/block/read"><i class="fas fa-cube"></i> Blocos</a></li>
-                                <li><a href="/apartment/read"><i class="fas fa-door-open"></i> Apartamentos</a></li>
-                                <li><a href="/resident/read" class="active"><i class="fas fa-users"></i> Moradores</a></li>
+                                <li><a href="/block/read"><i class="fas fa-search"></i> Pesquisa de Blocos</a></li>
+                                <li><a href="/apartment/read"><i class="fas fa-search"></i> Pesquisa de Apartamentos</a></li>
+                                <li><a href="/resident/read"><i class="fas fa-user-friends"></i> Pesquisa de Moradores</a></li>
+                                <li><a href="/payment/create"><i class="fas fa-hand-holding-usd"></i> Registro de Pagamento</a></li>
+                                <li><a href="/maintenance/create"><i class="fas fa-clipboard-list"></i> Registro de tipos de Manutenção</a></li>
+                                <li><a href="/maintenance/register"><i class="fas fa-hammer"></i> Registrar Manutenção</a></li>
                             </ul>
                         </nav>
 
@@ -1261,9 +1270,7 @@ app.get('/resident/create', function(req, res) {
 
                     <nav class="sidebar">
                         <ul class="menu">
-                            <li><a href="/block/read"><i class="fas fa-cube"></i> Blocos</a></li>
-                            <li><a href="/apartment/read"><i class="fas fa-door-open"></i> Apartamentos</a></li>
-                            <li><a href="/resident/read" class="active"><i class="fas fa-users"></i> Moradores</a></li>
+                            <li><a href="/resident/read"><i class="fas fa-cube"></i> Voltar</a></li>
                         </ul>
                     </nav>
 
@@ -1533,8 +1540,6 @@ app.post('/resident/create/resident', function(req, res) {
         });
     });
 });
-
-
 
 app.get('/resident/delete/:id', function(req, res){
     const id = req.params.id;
@@ -2510,14 +2515,17 @@ app.get('/payment/create', function(req, res) {
                             <span>Síndico</span>
                             <img src="/Public/images/user-avatar.jpg" alt="Usuário">
                         </div>
+                        
                     </header>
 
                     <nav class="sidebar">
                         <ul class="menu">
-                            <li><a href="/block/read"><i class="fas fa-cube"></i> Blocos</a></li>
-                            <li><a href="/apartment/read"><i class="fas fa-door-open"></i> Apartamentos</a></li>
-                            <li><a href="/resident/read"><i class="fas fa-users"></i> Moradores</a></li>
-                            <li><a href="/payment/create" class="active"><i class="fas fa-money-bill-wave"></i> Pagamentos</a></li>
+                            <li><a href="/block/read"><i class="fas fa-search"></i> Pesquisa de Blocos</a></li>
+                                <li><a href="/apartment/read"><i class="fas fa-search"></i> Pesquisa de Apartamentos</a></li>
+                                <li><a href="/resident/read"><i class="fas fa-user-friends"></i> Pesquisa de Moradores</a></li>
+                                <li><a href="/payment/create"><i class="fas fa-hand-holding-usd"></i> Registro de Pagamento</a></li>
+                                <li><a href="/maintenance/create"><i class="fas fa-clipboard-list"></i> Registro de tipos de Manutenção</a></li>
+                                <li><a href="/maintenance/register"><i class="fas fa-hammer"></i> Registrar Manutenção</a></li>
                         </ul>
                     </nav>
 
@@ -2708,7 +2716,190 @@ app.post('/payment/create/submit', function(req, res) {
     });
 });
 
-app.get('/maintenance/create')
+app.get("/maintenance/create", function(req, res){
+    res.sendFile(__dirname + "/Pages/Maintenance/Create/index.html");
+});
+
+app.post('/maintenance/create/maintenance', function(req, res) {
+    const descricao = req.body.descricao;
+
+    const values = [descricao];
+    const insert = "INSERT INTO tipos_manutencao (descricao) VALUES (?)";
+
+    db.query(insert, values, function(err, result) {
+        if (!err) {
+            console.log("Dados inseridos com sucesso!");
+            res.redirect('/maintenance/register'); 
+        } else {
+            console.log("Erro ao inserir dados!", err);
+            if (err.errno === 1062) {
+                res.status(400).send("Erro: Não pode haver manutenções duplicadas!");
+            } else {
+                res.status(500).send("Erro interno ao inserir dados!");
+            }
+        }
+    });
+});
+
+app.get("/maintenance/register", function(req, res) {
+    const query = "SELECT id, descricao FROM tipos_manutencao ORDER BY descricao";
+    
+    db.query(query, function(err, tipos) {
+        if (err) {
+            console.log("Erro ao buscar tipos de manutenção:", err);
+            return res.status(500).send("Erro ao carregar formulário");
+        }
+        
+        res.send(`
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>SysCondomínio - Registrar Manutenção</title>
+                <link rel="stylesheet" href="/styleMaintenance-register.css">
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+            </head>
+            <body>
+                <header class="app-header">
+                    <div class="logo">
+                        <i class="fas fa-building"></i>
+                        <h1>SysCondomínio</h1>
+                    </div>
+                    <div class="user-area">
+                        <span>Síndico</span>
+                        <img src="https://via.placeholder.com/40" alt="Usuário">
+                    </div>
+                </header>
+                
+                <div class="sidebar">
+                    <ul class="menu">
+                                <li><a href="/block/read"><i class="fas fa-search"></i> Pesquisa de Blocos</a></li>
+                                <li><a href="/apartment/read"><i class="fas fa-search"></i> Pesquisa de Apartamentos</a></li>
+                                <li><a href="/resident/read"><i class="fas fa-user-friends"></i> Pesquisa de Moradores</a></li>
+                                <li><a href="/payment/create"><i class="fas fa-hand-holding-usd"></i> Registro de Pagamento</a></li>
+                                <li><a href="/maintenance/create"><i class="fas fa-clipboard-list"></i> Registro de tipos de Manutenção</a></li>
+                                <li><a href="/maintenance/register"><i class="fas fa-hammer"></i> Registrar Manutenção</a></li>
+                    </ul>
+                </div>
+                
+                <main class="main-content">
+                    <div class="container">
+                        <h1><i class="fas fa-tools"></i> Registrar Manutenção</h1>
+                        
+                        <form action="/maintenance/register" method="POST" onsubmit="return validateForm()">
+                            <div class="form-group">
+                                <label for="tipo_manutencao">Tipo de Manutenção:</label>
+                                <select id="tipo_manutencao" name="tipo_manutencao" required>
+                                    <option value="">Selecione</option>
+                                    ${tipos.map(tipo => `
+                                        <option value="${tipo.id}">${tipo.descricao}</option>
+                                    `).join('')}
+                                </select>
+                                <div id="tipoError" class="error-message"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="data_manutencao">Data:</label>
+                                <input type="date" id="data_manutencao" name="data_manutencao" required>
+                                <div id="dataError" class="error-message"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="local_manutencao">Local:</label>
+                                <input type="text" id="local_manutencao" name="local_manutencao" required>
+                                <div id="localError" class="error-message"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="descricao">Descrição (Opcional):</label>
+                                <textarea id="descricao" name="descricao" rows="3"></textarea>
+                            </div>
+                            
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Registrar
+                                </button>
+                                <a href="/" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Voltar
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </main>
+                
+                <script>
+                    function validateForm() {
+                        const tipo = document.getElementById('tipo_manutencao').value;
+                        const data = document.getElementById('data_manutencao').value;
+                        const local = document.getElementById('local_manutencao').value;
+                        
+                        let isValid = true;
+                        
+                        if (!tipo) {
+                            document.getElementById('tipoError').textContent = 'Selecione o tipo de manutenção';
+                            isValid = false;
+                        } else {
+                            document.getElementById('tipoError').textContent = '';
+                        }
+                        
+                        if (!data) {
+                            document.getElementById('dataError').textContent = 'Informe a data da manutenção';
+                            isValid = false;
+                        } else {
+                            document.getElementById('dataError').textContent = '';
+                        }
+                        
+                        if (!local) {
+                            document.getElementById('localError').textContent = 'Informe o local da manutenção';
+                            isValid = false;
+                        } else {
+                            document.getElementById('localError').textContent = '';
+                        }
+                        
+                        return isValid;
+                    }
+                </script>
+            </body>
+            </html>
+        `);
+    });
+});
+
+app.post("/maintenance/register", function(req, res) {
+    const { tipo_manutencao, data_manutencao, local_manutencao, descricao } = req.body;
+    
+    if (!tipo_manutencao || !data_manutencao || !local_manutencao) {
+        return res.status(400).send(`
+            <script>
+                alert("Preencha todos os campos obrigatórios");
+                window.history.back();
+            </script>
+        `);
+    }
+    
+    const query = "INSERT INTO manutencoes (tipo_id, data_manutencao, local, descricao) VALUES (?, ?, ?, ?)";
+    const values = [tipo_manutencao, data_manutencao, local_manutencao, descricao || null];
+    
+    db.query(query, values, function(err, result) {
+        if (err) {
+            console.log("Erro ao registrar manutenção:", err);
+            return res.status(500).send(`
+                <script>
+                    alert("Erro ao registrar manutenção");
+                    window.history.back();
+                </script>
+            `);
+        }
+        
+        res.send(`
+            <script>
+                alert("Manutenção registrada com sucesso");
+                window.location.href = "/maintenance/register";
+            </script>
+        `);
+    });
+});
 
 app.listen(3000, () => {
     console.log('Servidor rodando na url http://localhost:3000');

@@ -59,20 +59,17 @@ CREATE TABLE pagamentos (
 CREATE TABLE tipos_manutencao (
     id INT AUTO_INCREMENT PRIMARY KEY,
     descricao VARCHAR(100) NOT NULL,
-    frequencia_estimada VARCHAR(50) -- Opcional: para manutenções periódicas
+    UNIQUE KEY ( (LOWER(descricao)) )
 );
 
 -- Tabela 6: Manutenções
 CREATE TABLE manutencoes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     tipo_id INT NOT NULL,
-    data DATE NOT NULL,
-    data_agendamento DATE,
+    data_manutencao DATE NOT NULL,
     local VARCHAR(100) NOT NULL,
     descricao TEXT,
-    custo DECIMAL(10,2),
-    responsavel VARCHAR(100),
-    status ENUM('agendada', 'realizada', 'cancelada') DEFAULT 'agendada',
+    data_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (tipo_id) REFERENCES tipos_manutencao(id)
 );
 
@@ -98,3 +95,15 @@ BEGIN
     WHERE id = OLD.bloco_id;
 END//
 DELIMITER ;
+
+
+select*from blocos;
+select*from apartamentos;
+select*from moradores;
+select*from veiculos;
+select*from pagamentos;
+select*from tipos_manutencao;
+select*from  manutencoes;
+
+
+

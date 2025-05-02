@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SysCondomínio - Criar Bloco</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../../styleCreateMaintenance.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">
+                <i class="fas fa-building"></i>
+                <h1>SysCondomínio</h1>
+            </div>
+        </header>
+
+        <nav class="sidebar">
+            <ul class="menu">
+                <li><a href="/block/read"><i class="fas fa-search"></i> Pesquisa de Blocos</a></li>
+                <li><a href="/apartment/read"><i class="fas fa-search"></i> Pesquisa de Apartamentos</a></li>
+                <li><a href="/resident/read"><i class="fas fa-user-friends"></i> Pesquisa de Moradores</a></li>
+                <li><a href="/payment/create"><i class="fas fa-hand-holding-usd"></i> Registro de Pagamento</a></li>
+                <li><a href="/maintenance/create"><i class="fas fa-clipboard-list"></i> Registro de tipos de Manutenção</a></li>
+                <li><a href="/maintenance/register"><i class="fas fa-hammer"></i> Registrar Manutenção</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h2><i class="fas fa-plus-circle"></i> Registrar Novo Tipo de Manutenção</h2>
+            </div>
+
+            <div class="form-container">
+                <form action="/maintenance/create/maintenance" method="POST" id="createForm">
+                    <div class="form-group">
+                        <label for="descricao"><i class="fas fa-cube"></i> Descrição da Manutenção:</label>
+                        <input type="text" id="descricao" name="descricao" required placeholder="Ex: Janela Quebrada">
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Cadastrar
+                        </button>
+
+                        <a href="/" class="btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Voltar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
