@@ -35,6 +35,8 @@ db.connect((err) => {
     }
 });
 
+//tive q usar o fs aqui, pq foi a unica maneira que consegui fazer o html funcionar
+
 app.get("/", (req, res) => {
     const queries = {
         residents: "SELECT COUNT(*) as total FROM moradores",
