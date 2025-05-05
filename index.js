@@ -2620,7 +2620,7 @@ app.get('/payment/create', function(req, res) {
                                     <option value="">Selecione um apartamento</option>
                                     ${apartamentos.map(apto => `
                                         <option value="${apto.id}" ${apartamentoId == apto.id ? 'selected' : ''}>
-                                            Bloco ${apto.bloco_descricao} - Apt ${apto.numero}
+                                         ${apto.bloco_descricao} - Apt ${apto.numero}
                                         </option>
                                     `).join('')}
                                 </select>
