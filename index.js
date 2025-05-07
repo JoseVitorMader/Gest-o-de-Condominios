@@ -15,14 +15,18 @@ app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const sslOptions = {
+    ca: fs.readFileSync('./BaltimoreCyberTrustRoot.crt.pem'),
+}
 
 
 const db = mysql.createConnection({
-    host: 'localhost', 
-    user: 'root',  
-    password: 'root', 
+    host: 'condominioatividade.database.windows.net', 
+    user: 'root@',  
+    password: 'Cedup@2025', 
     database: 'GerenciaCondominio', 
-    port: 3306 
+    port: 3306,
+    ssl: sslOptions 
 });
 
 
