@@ -22,7 +22,7 @@ const sslOptions = {
 
 const db = mysql.createConnection({
     host: 'condominioatividade.database.windows.net', 
-    user: 'root@gerenciacondominio',  
+    user: 'root@',  
     password: 'Cedup@2025', 
     database: 'GerenciaCondominio', 
     port: 3306,
